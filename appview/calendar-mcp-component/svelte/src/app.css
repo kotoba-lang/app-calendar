@@ -1,0 +1,19 @@
+:root {
+  color-scheme: dark;
+  --gv2-bg-primary: #14162b;
+  --gv2-bg-sidebar: #1b1d38;
+  --gv2-bg-hover: #262a4c;
+  --gv2-bg-input: #1f2240;
+  --gv2-bg-card: #1e2140;
+  --gv2-text-primary: #eef2ff;
+  --gv2-text-secondary: #b8c0e0;
+  --gv2-text-muted: #7a83a8;
+  --gv2-border: #2b2f58;
+  --gv2-accent: #4f8cff;
+  --gv2-accent-hover: #6aa1ff;
+  --gv2-accent-rgb: 79, 140, 255;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,36 @@
+{
+  "name": "kotodama-calendar-mcp",
+  "main": "svelte/.svelte-kit/cloudflare/_worker.js",
+  "compatibility_date": "2025-03-17",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_als"
+  ],
+  "assets": {
+    "directory": "./svelte/.svelte-kit/cloudflare/client",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "APP_CAPABILITIES": "[\"edge-assets\",\"bpmn-dispatch\",\"oauth-redirect\"]",
+    "APP_DESCRIPTION": "Thin edge facade; calendar business logic runs in BPMN + Zeebe Python",
+    "APP_DISPLAY_NAME": "Calendar",
+    "APP_EMBED_URL": "https://calendar-mcp.etzhayyim.com/?embed=1",
+    "APP_FRAMEWORK": "sveltekit-edge-bff",
+    "AGENTGATEWAY_MCP_ROUTER_URL": "https://mcp.etzhayyim.com/xrpc/com.etzhayyim.mcp.message",
+    "APP_NANOID": "calendar-mcp",
+    "APP_PERFORMER_TYPE": "system",
+    "APP_UI_TYPE": "appview"
+  },
+  "routes": [
+    {
+      "pattern": "calendar-mcp.etzhayyim.com/*",
+      "zone_name": "etzhayyim.com"
+    },
+    {
+      "pattern": "calendar.etzhayyim.com/*",
+      "zone_name": "etzhayyim.com"
+    }
+  ]
+}

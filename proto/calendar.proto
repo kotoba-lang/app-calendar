@@ -1,0 +1,394 @@
+syntax = "proto3";
+
+package calendar;
+
+option go_package = "github.com/etzhayyim/kyber-erp/gen/calendar";
+
+import "google/protobuf/timestamp.proto";
+
+// ============================================================================
+// Enums
+// ============================================================================
+
+enum EventStatus {
+  EVENT_STATUS_UNSPECIFIED = 0;
+  EVENT_STATUS_CONFIRMED = 1;
+  EVENT_STATUS_TENTATIVE = 2;
+  EVENT_STATUS_CANCELLED = 3;
+}
+
+enum AttendeeResponseStatus {
+  ATTENDEE_RESPONSE_STATUS_UNSPECIFIED = 0;
+  ATTENDEE_RESPONSE_STATUS_ACCEPTED = 1;
+  ATTENDEE_RESPONSE_STATUS_DECLINED = 2;
+  ATTENDEE_RESPONSE_STATUS_TENTATIVE = 3;
+  ATTENDEE_RESPONSE_STATUS_NEEDS_ACTION = 4;
+}
+
+// ============================================================================
+// Core Types
+// ============================================================================
+
+message Calendar {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string timezone = 4;
+  string color = 5;
+  string owner_user_id = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message Attendee {
+  string email = 1;
+  string display_name = 2;
+  AttendeeResponseStatus response_status = 3;
+  bool is_organizer = 4;
+  bool is_optional = 5;
+}
+
+message Event {
+  string id = 1;
+  string calendar_id = 2;
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp start_time = 5;
+  google.protobuf.Timestamp end_time = 6;
+  string location = 7;
+  repeated Attendee attendees = 8;
+  string recurrence = 9;
+  EventStatus status = 10;
+  bool is_all_day = 11;
+  string organizer_email = 12;
+  string timezone = 13;
+  map<string, string> metadata = 14;
+  google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Timestamp updated_at = 16;
+}
+
+message CalendarList {
+  string id = 1;
+  string calendar_id = 2;
+  string user_id = 3;
+  string color_override = 4;
+  bool is_hidden = 5;
+  bool is_selected = 6;
+  string access_role = 7;
+  google.protobuf.Timestamp added_at = 8;
+}
+
+message FreebusyInfo {
+  string calendar_id = 1;
+  repeated FreebusySlot busy_slots = 2;
+}
+
+message FreebusySlot {
+  google.protobuf.Timestamp start_time = 1;
+  google.protobuf.Timestamp end_time = 2;
+}
+
+message Settings {
+  string user_id = 1;
+  string timezone = 2;
+  string date_format = 3;
+  string time_format = 4;
+  int32 week_start_day = 5;
+  bool show_weekends = 6;
+  string default_event_duration = 7;
+  bool enable_notifications = 8;
+  int32 default_reminder_minutes = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message Project {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string color = 4;
+  string owner_user_id = 5;
+  repeated string member_user_ids = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// ============================================================================
+// Calendar RPCs - Request/Response Messages
+// ============================================================================
+
+message CreateCalendarRequest {
+  string name = 1;
+  string description = 2;
+  string timezone = 3;
+  string color = 4;
+}
+
+message CreateCalendarResponse {
+  Calendar calendar = 1;
+}
+
+message GetCalendarRequest {
+  string id = 1;
+}
+
+message GetCalendarResponse {
+  Calendar calendar = 1;
+}
+
+message ListCalendarsRequest {
+  string owner_user_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListCalendarsResponse {
+  repeated Calendar calendars = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message UpdateCalendarRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string timezone = 4;
+  string color = 5;
+}
+
+message UpdateCalendarResponse {
+  Calendar calendar = 1;
+}
+
+message DeleteCalendarRequest {
+  string id = 1;
+}
+
+message DeleteCalendarResponse {}
+
+// ============================================================================
+// Event RPCs - Request/Response Messages
+// ============================================================================
+
+message CreateEventRequest {
+  string calendar_id = 1;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+  string location = 6;
+  repeated Attendee attendees = 7;
+  string recurrence = 8;
+  bool is_all_day = 9;
+  string timezone = 10;
+}
+
+message CreateEventResponse {
+  Event event = 1;
+}
+
+message GetEventRequest {
+  string id = 1;
+}
+
+message GetEventResponse {
+  Event event = 1;
+}
+
+message ListEventsRequest {
+  string calendar_id = 1;
+  google.protobuf.Timestamp time_min = 2;
+  google.protobuf.Timestamp time_max = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message ListEventsResponse {
+  repeated Event events = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message UpdateEventRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+  string location = 6;
+  repeated Attendee attendees = 7;
+  string recurrence = 8;
+  EventStatus status = 9;
+  bool is_all_day = 10;
+  string timezone = 11;
+}
+
+message UpdateEventResponse {
+  Event event = 1;
+}
+
+message DeleteEventRequest {
+  string id = 1;
+}
+
+message DeleteEventResponse {}
+
+// ============================================================================
+// CalendarList RPCs - Request/Response Messages
+// ============================================================================
+
+message AddCalendarListRequest {
+  string calendar_id = 1;
+  string user_id = 2;
+  string color_override = 3;
+  string access_role = 4;
+}
+
+message AddCalendarListResponse {
+  CalendarList calendar_list = 1;
+}
+
+message GetCalendarListRequest {
+  string id = 1;
+}
+
+message GetCalendarListResponse {
+  CalendarList calendar_list = 1;
+}
+
+message ListCalendarListsRequest {
+  string user_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListCalendarListsResponse {
+  repeated CalendarList calendar_lists = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message UpdateCalendarListRequest {
+  string id = 1;
+  string color_override = 2;
+  bool is_hidden = 3;
+  bool is_selected = 4;
+}
+
+message UpdateCalendarListResponse {
+  CalendarList calendar_list = 1;
+}
+
+// ============================================================================
+// Freebusy RPCs - Request/Response Messages
+// ============================================================================
+
+message QueryFreebusyRequest {
+  google.protobuf.Timestamp time_min = 1;
+  google.protobuf.Timestamp time_max = 2;
+  repeated string calendar_ids = 3;
+}
+
+message QueryFreebusyResponse {
+  repeated FreebusyInfo calendars = 1;
+}
+
+// ============================================================================
+// Settings RPCs - Request/Response Messages
+// ============================================================================
+
+message GetSettingsRequest {
+  string user_id = 1;
+}
+
+message GetSettingsResponse {
+  Settings settings = 1;
+}
+
+message UpdateSettingsRequest {
+  string user_id = 1;
+  string timezone = 2;
+  string date_format = 3;
+  string time_format = 4;
+  int32 week_start_day = 5;
+  bool show_weekends = 6;
+  string default_event_duration = 7;
+  bool enable_notifications = 8;
+  int32 default_reminder_minutes = 9;
+}
+
+message UpdateSettingsResponse {
+  Settings settings = 1;
+}
+
+// ============================================================================
+// Project RPCs - Request/Response Messages
+// ============================================================================
+
+message CreateProjectRequest {
+  string name = 1;
+  string description = 2;
+  string color = 3;
+  repeated string member_user_ids = 4;
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string id = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message ListProjectsRequest {
+  string owner_user_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+// ============================================================================
+// Service
+// ============================================================================
+
+service CalendarService {
+  // Calendar RPCs
+  rpc CreateCalendar(CreateCalendarRequest) returns (CreateCalendarResponse);
+  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
+  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
+  rpc UpdateCalendar(UpdateCalendarRequest) returns (UpdateCalendarResponse);
+  rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
+
+  // Event RPCs
+  rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+  rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse);
+  rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse);
+  rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse);
+
+  // CalendarList RPCs
+  rpc AddCalendarList(AddCalendarListRequest) returns (AddCalendarListResponse);
+  rpc GetCalendarList(GetCalendarListRequest) returns (GetCalendarListResponse);
+  rpc ListCalendarLists(ListCalendarListsRequest) returns (ListCalendarListsResponse);
+  rpc UpdateCalendarList(UpdateCalendarListRequest) returns (UpdateCalendarListResponse);
+
+  // Freebusy
+  rpc QueryFreebusy(QueryFreebusyRequest) returns (QueryFreebusyResponse);
+
+  // Settings RPCs
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
+  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
+
+  // Project RPCs
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+}

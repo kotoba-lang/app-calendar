@@ -1,0 +1,103 @@
+{
+  "@context": "https://etzhayyim.com/ns/kotodama/v1",
+  "@id": "did:web:calendar.etzhayyim.com",
+  "component": {
+    "path": "src/app.ts"
+  },
+  "convoSystemPrompt": "You are calendar-mcp-component agent. Calendar — AI Agent for calendar intelligence and analytics. Respond helpfully in the users language.",
+  "duties": [
+    "勤労の義務"
+  ],
+  "governance": {
+    "raci": "responsible",
+    "classification": "internal",
+    "complianceFrameworks": [
+      "calendar-policy"
+    ]
+  },
+  "kpi": [
+    "credits の獲得"
+  ],
+  "name": "calendar-mcp-component",
+  "nanoid": "calendar-mcp",
+  "performerType": "system",
+  "pool": {},
+  "profile": {
+    "agentType": "autonomous",
+    "capabilities": [
+      "edge-assets",
+      "bpmn-dispatch",
+      "oauth-redirect"
+    ],
+    "description": "Thin Cloudflare edge facade for Calendar. Calendar business logic runs in AgentGateway MCP + pod-side LangServer workers.",
+    "displayName": "Calendar",
+    "isBot": true,
+    "operator": "etzhayyim.com"
+  },
+  "project": "calendar",
+  "routes": [
+    {
+      "host": "calendar.etzhayyim.com",
+      "paths": [
+        "/"
+      ],
+      "tls": true
+    },
+    {
+      "host": "calendar-mcp.etzhayyim.com",
+      "paths": [
+        "/"
+      ],
+      "tls": true
+    }
+  ],
+  "runtimeType": "worker",
+  "build": {
+    "guestLanguage": "ts",
+    "role": "thin-edge"
+  },
+  "space": {
+    "channels": [
+      {
+        "default": true,
+        "kind": "public",
+        "name": "calendar-mcp-feed"
+      }
+    ],
+    "joinRule": "public",
+    "name": "Calendar"
+  },
+  "triggers": {
+    "http": {
+      "listen": "0.0.0.0:8080",
+      "routes": [
+        "/api/grpc/...",
+        "/health",
+        "/healthz",
+        "/readyz",
+        "/..."
+      ],
+      "spa": true,
+      "staticDir": "/wasm/svelte/dist"
+    },
+    "subscribeRepos": {
+      "collections": [
+        "app.bsky.feed.post",
+        "app.bsky.feed.like",
+        "app.bsky.feed.repost",
+        "app.bsky.graph.follow",
+        "com.etzhayyim.apps.calendar.event",
+        "com.etzhayyim.apps.calendar.reminder"
+      ]
+    }
+  },
+  "ui": {
+    "accent": "#3b82f6",
+    "icon": "📅"
+  },
+  "uiType": "appview",
+  "yata": {
+    "dataDir": "/data/yata",
+    "graphUri": "/data/graph"
+  }
+}
