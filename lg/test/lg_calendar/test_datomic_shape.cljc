@@ -7,7 +7,7 @@
   + the canonical event reconstruction, verifying the KotobaCalendarStore read path
   against the documented contract (not a guessed shape), without a live pod."
   (:require [clojure.test :refer [deftest is]]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [lg-calendar.mapping :as mapping]
             [lg-calendar.graphs.health :as health]
             [lg-calendar.server :as server]

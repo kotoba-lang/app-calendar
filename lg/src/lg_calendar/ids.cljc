@@ -8,7 +8,7 @@
   Faithful-port note: the Python `nanoid` generator (deployed) falls back to
   stdlib `secrets`; this clj port uses a `java.security.SecureRandom` draw over
   the same 36-char alphabet — equivalent entropy, no nanoid dependency."
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (def ^:private slug-alphabet "0123456789abcdefghijklmnopqrstuvwxyz")
 (def ^:private domain "calendar.etzhayyim.com")

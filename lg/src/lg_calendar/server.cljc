@@ -17,7 +17,7 @@
   `LG_CALENDAR_API_KEY`; the edge actor-worker (x-internal-trust) is the real
   trust boundary."
   (:require [cheshire.core :as json]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [lg-calendar.handlers :as handlers]
             [lg-calendar.store :as store]
             [lg-calendar.kotoba-datomic :as kd]))

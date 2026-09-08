@@ -6,7 +6,7 @@
   pagination, optimistic-concurrency (ifSequence) on update/delete, not-found,
   rsvp, and provider-id lookup — all without a live kotoba pod."
   (:require [clojure.test :refer [deftest is]]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [lg-calendar.handlers :as handlers]
             [lg-calendar.store :as store]))
 

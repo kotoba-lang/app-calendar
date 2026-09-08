@@ -13,7 +13,7 @@
 
   Port note: the Python methods are async; this clj port is synchronous (no event
   loop), which is the only behavioral deviation."
-  (:require [clojure.string :as str]
+  (:require [kotoba.lang.text :as str]
             [lg-calendar.ids :as ids]
             [lg-calendar.edn :as edn]
             [lg-calendar.kotoba-datomic :as kd]))
