@@ -9,7 +9,7 @@
   Bearer JWT (`KOTOBA_BEARER`); `KOTOBA_DEFAULT_VISIBILITY=authenticated` on the
   kotoba pod keeps the dedicated `calendar-v1` graph JWT-only per ADR-2605302130."
   (:require [cheshire.core :as json]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [lg-calendar.edn :as edn]))
 
 (def default-config {:xrpc-url "http://kotoba.kotoba.svc.cluster.local:8080"

@@ -9,7 +9,7 @@
   Faithful-port note: the Python `EdnSymbol` (bare symbol, no quoting) maps to a
   native Clojure keyword here — `(str :db/add)` already yields `:db/add`, so tx-op
   attributes/verbs are plain keywords and `encode` prints a keyword verbatim."
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (defn kw
   "Keyword shortcut: (kw \"cal/summary\") -> :cal/summary, (kw \"db/add\") -> :db/add.
