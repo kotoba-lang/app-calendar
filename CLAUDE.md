@@ -59,7 +59,7 @@ listCalendars`). Legacy `connectAccount/cronTick/syncFromGoogle` = the older ing
 ```
 lg/                             # clj twin is canonical (ADR-2606280030; python deleted)
 ├── bb.edn                      # scoped babashka project (langgraph-clj StateGraph deps)
-├── run_tests.clj               # clojure.test runner (bb test)
+├── run_tests.clj               # clojure.test runner (kbb -M:test)
 ├── src/lg_calendar/
 │   ├── server.cljc             # XRPC surface (/xrpc/ai.etzhayyim.apps.calendar.*)
 │   ├── handlers.cljc           # canonical method logic (SSoT for behavior)
@@ -79,7 +79,7 @@ lg/                             # clj twin is canonical (ADR-2606280030; python 
 
 ```bash
 # pod logic (no live kotoba needed) — clj twin (ADR-2606280030), python deleted
-cd 60-apps/etzhayyim-project-calendar/lg && bb test
+cd 60-apps/etzhayyim-project-calendar/lg && kbb -M:test
 # compat skins (mappers + route integration)
 cd 50-infra/cloudflare/workers/calendar-compat && node --test test/*.test.ts
 # deploy (infra) — Helm chart only; the python Dockerfile was removed with the python twin
