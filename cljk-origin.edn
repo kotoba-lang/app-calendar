@@ -1,0 +1,16 @@
+{:format :kotoba.cljk-origin/v1
+ :renamed-on "2026-09-11"
+ :decision "adr-2609111500-cljk-rename-all-clojure-source (com-junkawasaki/root 90-docs/adr; owner instruction 2026-09-11)"
+ :rule "value = the extension the file had before the rename. A path ending in .clj.cljk or .cljs.cljk kept it in the name because both platform files existed (or the plain target was taken)."
+ :origins
+ {"lg/run_tests.cljk" ".clj"
+  "lg/src/lg_calendar/edn.cljk" ".cljc"
+  "lg/src/lg_calendar/graphs/health.cljk" ".cljc"
+  "lg/src/lg_calendar/handlers.cljk" ".cljc"
+  "lg/src/lg_calendar/ids.cljk" ".cljc"
+  "lg/src/lg_calendar/kotoba_datomic.cljk" ".cljc"
+  "lg/src/lg_calendar/mapping.cljk" ".cljc"
+  "lg/src/lg_calendar/server.cljk" ".cljc"
+  "lg/src/lg_calendar/store.cljk" ".cljc"
+  "lg/test/lg_calendar/test_datomic_shape.cljk" ".cljc"
+  "lg/test/lg_calendar/test_handlers.cljk" ".cljc"}}
