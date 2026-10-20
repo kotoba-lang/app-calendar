@@ -1,0 +1,50 @@
+(ns lg-calendar.page-parity-test
+  "aiueos/calendar_page.cljk（判定コア）と lg-calendar.handlers の
+  pagination / delete / startsAt 窓の parity。FakeCalendarStore 上の実関数
+  list-events / delete-event が guest の判定と一致する。"
+  (:require [clojure.test :refer [deftest is testing]]
+            [clojure.string :as str]
+            [lg-calendar.handlers :as h]
+            [lg-calendar.store :as store]))
+
+(defn- has-next [offset limit total]
+  (if (< (+ offset limit) total) 1 0))
+
+(deftest pagination-matches-guest
+  (let [s (store/fake-calendar-store)]
+    (doseq [t ["2026-07-14T01:00:00Z" "2026-07-14T02:00:00Z" "2026-07-14T03:00:00Z"]]
+      (h/create-event s {"summary" "会議" "startsAt" t}))
+    (testing "guest test-defaults: offset 0 / limit 50"
+      (let [r (h/list-events s {})]
+        (is (= 0 (get r "offset")))
+        (is (= 50 (get r "limit")))))
+    (testing "guest test-next / test-no-next: offset+limit < total で次ページ"
+      (let [r (h/list-events s {"limit" 2})]
+        (is (= 3 (get r "total")))
+        (is (= 2 (count (get r "events"))))
+        (is (= 1 (has-next 0 2 3))))
+      (let [r (h/list-events s {"offset" 2 "limit" 2})]
+        (is (= 1 (count (get r "events"))))
+        (is (= 0 (has-next 2 2 3))))))
+  (testing "guest test-range: startsAfter 以上・startsBefore 未満"
+    (let [s (store/fake-calendar-store)]
+      (doseq [t ["2026-07-14T01:00:00Z" "2026-07-14T02:00:00Z" "2026-07-14T03:00:00Z"]]
+        (h/create-event s {"summary" "会議" "startsAt" t}))
+      ;; startsAfter 02:00 → 02:00 を含む 2 件（以上）
+      (is (= 2 (count (get (h/list-events s {"startsAfter" "2026-07-14T02:00:00Z"}) "events"))))
+      ;; startsBefore 02:00 → 01:00 の 1 件（未満）
+      (is (= 1 (count (get (h/list-events s {"startsBefore" "2026-07-14T02:00:00Z"}) "events")))))))
+
+(deftest delete-matches-guest
+  (let [s (store/fake-calendar-store)
+        created (h/create-event s {"summary" "会議" "startsAt" "2026-07-14T01:00:00Z"})
+        slug (last (str/split (get created "uri") #"/"))]
+    (testing "guest test-delete-conflict: ifSequence 不一致は conflict（2 = 412）"
+      (is (true? (get (h/delete-event s {"eventId" slug "ifSequence" 99}) "conflict"))))
+    (testing "guest test-delete: 一致なら削除（0）"
+      (is (true? (get (h/delete-event s {"eventId" slug "ifSequence" 0}) "ok"))))
+    (testing "guest test-delete-missing: 削除後は notFound（1）"
+      (is (true? (get (h/delete-event s {"eventId" slug}) "notFound"))))))
+
+(defn- has-next [offset limit total]
+  (if (< (+ offset limit) total) 1 0))
