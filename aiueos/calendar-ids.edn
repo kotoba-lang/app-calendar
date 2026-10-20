@@ -1,0 +1,17 @@
+;; app-calendar — itonami（dapp）の aiueos アプリ記述子（notes.edn 形）。
+;; 判定コアは aiueos/calendar_ids.cljk（イベント ID の解決・slug 形判定）。
+;; 正本は lg/src/lg_calendar/ids.cljk。pure（:effects #{}）。
+{:aiueos/component :app/calendar-ids
+ :aiueos/kind :app
+ :aiueos/trust :untrusted
+ :aiueos/source "calendar_ids.cljk"
+ :aiueos/wasm "calendar_ids.wasm"
+ :aiueos/entry "main"
+ :aiueos/args []
+ :aiueos/imports #{}
+ :aiueos/exports #{:app/main
+                   :app/slug-form-ok
+                   :app/id-class
+                   :app/resolve-judgment}
+ :aiueos/effects #{}
+ :aiueos/limits {:memory-pages 16 :fuel 5000000}}
