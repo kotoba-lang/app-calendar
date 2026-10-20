@@ -1,0 +1,18 @@
+;; app-calendar — itonami（dapp）の aiueos アプリ記述子（notes.edn 形）。
+;; 判定コアは aiueos/calendar_page.cljk（pagination・startsAt 窓・delete 競合）。
+;; 正本は lg/src/lg_calendar/handlers.cljk。pure（:effects #{}）。
+{:aiueos/component :app/calendar-page
+ :aiueos/kind :app
+ :aiueos/trust :untrusted
+ :aiueos/source "calendar_page.cljk"
+ :aiueos/wasm "calendar_page.wasm"
+ :aiueos/entry "main"
+ :aiueos/args []
+ :aiueos/imports #{}
+ :aiueos/exports #{:app/main
+                   :app/has-next-page
+                   :app/page-default
+                   :app/range-judgment
+                   :app/delete-judgment}
+ :aiueos/effects #{}
+ :aiueos/limits {:memory-pages 16 :fuel 5000000}}
