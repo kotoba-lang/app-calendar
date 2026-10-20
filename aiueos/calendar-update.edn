@@ -1,0 +1,18 @@
+;; app-calendar — itonami（dapp）の aiueos アプリ記述子（notes.edn 形）。
+;; 判定コアは aiueos/calendar_update.cljk（更新の競合・パッチ・シーケンス規則）。
+;; 正本は lg/src/lg_calendar/handlers.cljk + mapping.cljc。pure（:effects #{}）。
+{:aiueos/component :app/calendar-update
+ :aiueos/kind :app
+ :aiueos/trust :untrusted
+ :aiueos/source "calendar_update.cljk"
+ :aiueos/wasm "calendar_update.wasm"
+ :aiueos/entry "main"
+ :aiueos/args []
+ :aiueos/imports #{}
+ :aiueos/exports #{:app/main
+                   :app/update-judgment
+                   :app/patch-admissible
+                   :app/next-sequence
+                   :app/default-of}
+ :aiueos/effects #{}
+ :aiueos/limits {:memory-pages 16 :fuel 5000000}}

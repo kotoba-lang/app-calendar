@@ -1,0 +1,22 @@
+(ns lg-calendar.update-parity-test
+  "aiueos/calendar_update.cljk（判定コア）と lg-calendar.handlers の更新規則の
+  parity。FakeCalendarStore 上の実関数 create-event / update-event が guest の
+  判定（not-found / ifSequence conflict / sequence inc）と一致する。"
+  (:require [clojure.test :refer [deftest is testing]]
+            [clojure.string :as str]
+            [lg-calendar.handlers :as h]
+            [lg-calendar.store :as store]))
+
+(deftest update-semantics-match-guest
+  (let [s (store/fake-calendar-store)
+        created (h/create-event s {"summary" "会議" "startsAt" "2026-07-14T01:00:00Z"})
+        slug (last (str/split (get created "uri") #"/"))]
+    (testing "guest test-match / test-no-ifseq: ifSequence 一致または無しは進行（0）"
+      (is (true? (get (h/update-event s {"eventId" slug "ifSequence" 0 "summary" "会議2"}) "ok")))
+      (is (true? (get (h/update-event s {"eventId" slug "summary" "会議3"}) "ok"))))
+    (testing "guest test-conflict: ifSequence が stored と違えば conflict（2 = 412）"
+      (is (true? (get (h/update-event s {"eventId" slug "ifSequence" 99 "summary" "x"}) "conflict"))))
+    (testing "guest test-not-found: 存在しない id は notFound（1）"
+      (is (true? (get (h/update-event s {"eventId" "nosuch00" "summary" "x"}) "notFound"))))
+    (testing "guest test-sequence: 成功した更新のたびに sequence が inc（conflict は inc しない）"
+      (is (= 2 (get-in (h/get-event s {"eventId" slug}) ["event" "sequence"]))))))

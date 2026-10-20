@@ -1,0 +1,8 @@
+(ns cheshire.core
+  "kbb 用の最小 shim（parity 実行のみ。本番は cheshire）。JSON.stringify/parse。")
+
+(defn generate-string [x]
+  (js/JSON.stringify (clj->js x)))
+
+(defn parse-string [s & [_kw?]]
+  (js->clj (js/JSON.parse s)))

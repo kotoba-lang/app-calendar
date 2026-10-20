@@ -1,0 +1,8 @@
+(ns lg-calendar.kotoba-datomic
+  "kbb 用の最小 shim（parity 実行のみ。本番は真の kotoba_datomic.cljk ——
+  StringBuilder / HTTP wire client）。FakeCalendarStore の parity では
+  呼ばれないためスタブ。")
+
+(defn transact [& _args] (throw (js/Error. "shim: wire client only")))
+(defn q [& _args] (throw (js/Error. "shim: wire client only")))
+(defn pull [& _args] (throw (js/Error. "shim: wire client only")))
