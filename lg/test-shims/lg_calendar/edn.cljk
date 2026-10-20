@@ -1,0 +1,44 @@
+(ns lg-calendar.edn
+  "kbb 用の最小 shim（parity 実行のみ。本番は真の edn.cljk ——
+  StringBuilder を使う JVM 実装）。tx-op の形と decode の意味論を忠実に再現。"
+  (:require [kotoba.lang.text :as str]))
+
+(defn kw [name]
+  (keyword (if (str/starts-with? name ":") (subs name 1) name)))
+
+(defn encode [x]
+  (pr-str x))
+
+(defn- attr-kw [a]
+  (kw a))
+
+(defn tx-add [e a v]
+  [(kw "db/add") e (attr-kw a) v])
+
+(defn tx-retract [e a v]
+  [(kw "db/retract") e (attr-kw a) v])
+
+(defn tx-retract-entity [e]
+  [(kw "db.fn/retractEntity") e])
+
+(defn encode-tx-data [ops]
+  (str "[" (str/join " " (map encode ops)) "]"))
+
+(def ^:private int-re #"^-?\d+$")
+(def ^:private float-re #"^-?\d+\.\d+([eE][+-]?\d+)?$")
+
+(defn parse-edn-value [s]
+  (if-not (string? s)
+    s
+    (cond
+      (and (str/starts-with? s "\"") (str/ends-with? s "\"") (>= (count s) 2))
+      (-> (subs s 1 (dec (count s)))
+          (str/replace "\\\"" "\"")
+          (str/replace "\\\\" "\\")
+          (str/replace "\\n" "\n"))
+      (= s "true") true
+      (= s "false") false
+      (= s "nil") nil
+      (re-matches int-re s) (js/parseInt s)
+      (re-matches float-re s) (js/parseFloat s)
+      :else s)))
