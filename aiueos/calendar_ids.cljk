@@ -1,0 +1,71 @@
+(ns calendar.ids
+  "calendar イベント ID 判定コア — itonami dapp bundle（pure, :effects #{}）。
+
+  イベント ID の解決（正本: lg/src/lg_calendar/ids.cljk の resolve-slug —
+  slug / eid / DID を bare slug に解決し、provider-native や iCalUid 形は
+  datomic lookup に回す = 解決しない）。
+
+  - slug の形: 6..32 文字、[0-9a-z] のみ（^...$）
+  - 解決の優先順: eid（cal:event:）→ DID（did:web: ... :event:）→ bare slug
+  - 形が無い・空・lookup 要りは解決しない（fail closed）
+
+  id-class の戻り: 0 = 解決しない / 1 = eid / 2 = DID / 3 = bare slug
+  slug-form-ok: 1 = 形どおり
+  resolve-judgment のエラービット（0 = 規則どおり）:
+    1 :bad-slug-form  slug 形が壊れている（6..32 か [0-9a-z] 違反）
+    2 :needs-lookup   解決しない id（provider-native / iCalUid / 空）
+
+  実行 host はスカラーのみ = KIR v3 / i64/direct ABI（kernel/selfhost 両対応）。
+
+  テストはゼロ引数 test-*、戻り 1/0:
+  <amu> test aiueos/calendar_ids.cljk"
+  (:export [main slug-form-ok id-class resolve-judgment
+            test-form test-form-len test-form-charset test-class
+            test-class-precedence test-resolve test-fail-closed]))
+
+(defn main [] :i64
+  0)
+
+(defn slug-form-ok [n-chars :i64 n-illegal :i64] :i64
+  (if (and (>= n-chars 6) (<= n-chars 32) (= n-illegal 0)) 1 0))
+
+(defn id-class [is-empty :i64 is-eid :i64 is-did-event :i64 is-valid-slug :i64] :i64
+  (if (= is-empty 1)
+    0
+    (if (= is-eid 1)
+      1
+      (if (= is-did-event 1)
+        2
+        (if (= is-valid-slug 1) 3 0)))))
+
+(defn resolve-judgment [n-chars :i64 n-illegal :i64 id-class-code :i64] :i64
+  (if (= id-class-code 0)
+    2
+    (if (= (slug-form-ok n-chars n-illegal) 1) 0 1)))
+
+;; --- tests（戻り 1 = pass） ------------------------------------------------
+
+(defn test-form [] :i64
+  (if (= (slug-form-ok 16 0) 1) 1 0))
+
+(defn test-form-len [] :i64
+  ;; 5 文字・33 文字は形外
+  (if (= (+ (slug-form-ok 5 0) (slug-form-ok 33 0)) 0) 1 0))
+
+(defn test-form-charset [] :i64
+  ;; 大文字・ハイフン等は [0-9a-z] 違反
+  (if (= (slug-form-ok 16 1) 0) 1 0))
+
+(defn test-class [] :i64
+  (if (= (+ (id-class 0 0 0 1) (id-class 1 1 1 1)) 3) 1 0))
+
+(defn test-class-precedence [] :i64
+  ;; eid → DID → bare slug の順（空は最優先で解決しない）
+  (if (= (+ (id-class 0 1 1 1) (id-class 0 0 1 1) (id-class 0 0 0 0)) 3) 1 0))
+
+(defn test-resolve [] :i64
+  (if (= (resolve-judgment 8 0 3) 0) 1 0))
+
+(defn test-fail-closed [] :i64
+  ;; 解決しない id は lookup ビット、壊れた形は bad-form ビット
+  (if (= (+ (resolve-judgment 8 0 0) (resolve-judgment 3 0 3) (resolve-judgment 16 2 1)) 4) 1 0))

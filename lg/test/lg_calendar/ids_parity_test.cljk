@@ -1,0 +1,21 @@
+(ns lg-calendar.ids-parity-test
+  "aiueos/calendar_ids.cljk（判定コア）と lg-calendar.ids の resolve-slug の
+  parity。解決の優先順（eid → DID → bare slug）と「解決しない id」の分類
+  （provider-native / iCalUid / 空）が guest の id-class と一致する。"
+  (:require [clojure.test :refer [deftest is testing]]
+            [lg-calendar.ids :as ids]))
+
+(deftest resolve-matches-guest-classes
+  (testing "guest test-class: bare slug はそのまま解決（3）"
+    (is (= "abc123" (ids/resolve-slug "abc123"))))
+  (testing "guest test-class-precedence: eid（1）→ DID（2）→ bare slug の順"
+    (is (= "abc123" (ids/resolve-slug "cal:event:abc123")))
+    (is (= "abc123" (ids/resolve-slug "did:web:calendar.etzhayyim.com:event:abc123"))))
+  (testing "guest test-fail-closed: 空・provider-native・iCalUid 形は解決しない（0 = lookup）"
+    (is (= nil (ids/resolve-slug "")))
+    (is (= nil (ids/resolve-slug nil)))
+    (is (= nil (ids/resolve-slug "2026-07-14T01:30:00Z@google"))))
+  (testing "guest test-form-len / test-form-charset: ^[0-9a-z]{6,32}$"
+    (is (= nil (ids/resolve-slug "abc")))
+    (is (= nil (ids/resolve-slug "Abc123")))
+    (is (= nil (ids/resolve-slug "abc-123")))))
